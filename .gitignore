@@ -22,3 +22,40 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environments (CRITICAL)
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs & runtime outputs
+*.log
+*.sqlite
+*.db
+
+# Tool-generated artifacts
+*.parquet
+*.json
+*.csv
+
+# Tool outputs (generated, not source)
+Tool1/data/output/
+Tool2/risk_assessment.json
+Tool3/trajectory_forecast.json
+Tool4/response_plan.json
+Tool5/execution_report.json
+Tool6/data/governance.db
+
+# UI build artifacts
+node_modules/
+dist/
+build/

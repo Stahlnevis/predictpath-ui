@@ -1,0 +1,6 @@
+time,source_user@domain,dest_user@domain,source_computer,dest_computer,auth_type,logon_type,auth_orientation,success_failure
+1,U101@DOM1,U101@DOM1,C101,C102,Kerberos,Network,LogOn,Success
+2,U103@DOM1,U103@DOM1,C103,C102,NTLM,Network,LogOn,Success
+3,U101@DOM1,U101@DOM1,C101,C102,?,Network,LogOn,Fail
+4,U999@DOM1,U999@DOM1,C999,C102,Kerberos,Network,LogOn,SuccessTHIS_IS_GARBAGE
+THIS_IS_GARBAGE
