@@ -5,6 +5,7 @@ import { PipelineControl } from "@/components/cockpit/PipelineControl";
 import { TerminalPanel, TerminalLine } from "@/components/cockpit/TerminalPanel";
 import { ResultsPanel } from "@/components/cockpit/ResultsPanel";
 import { GovernanceStatus } from "@/components/cockpit/GovernanceStatus";
+import { FileUploadPanel, UploadedFile } from "@/components/cockpit/FileUploadPanel";
 import { ResetLevel } from "@/components/cockpit/ResetControls";
 
 type ToolStatus = "idle" | "running" | "complete" | "error";
@@ -13,6 +14,9 @@ const Index = () => {
   // Pipeline state
   const [toolStatuses, setToolStatuses] = useState<Record<number, ToolStatus>>({});
   const [systemStatus, setSystemStatus] = useState<"idle" | "running" | "error">("idle");
+
+  // Uploaded files state
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   // Terminal state
   const [terminalLines, setTerminalLines] = useState<TerminalLine[]>([
@@ -116,7 +120,15 @@ const Index = () => {
   // This is a PLACEHOLDER - actual reset will execute real commands
   const handleReset = useCallback(
     (level: ResetLevel) => {
-      addTerminalLine("command", `# Initiating ${level.toUpperCase()} reset...`);
+      // Clear terminal first for a clean slate
+      setTerminalLines([
+        {
+          id: `reset-${Date.now()}`,
+          type: "command",
+          content: `# Initiating ${level.toUpperCase()} reset...`,
+          timestamp: new Date(),
+        },
+      ]);
 
       switch (level) {
         case "soft":
@@ -133,6 +145,8 @@ const Index = () => {
             streakCount: null,
             isConnected: false,
           });
+          // Also clear uploaded files on hard reset
+          setUploadedFiles([]);
           break;
         case "replay":
           addTerminalLine("info", "Loading historical execution reports...");
@@ -154,6 +168,20 @@ const Index = () => {
     [addTerminalLine]
   );
 
+  // Handle file upload
+  const handleFilesReady = useCallback((files: UploadedFile[]) => {
+    setUploadedFiles(files);
+    if (files.length > 0) {
+      addTerminalLine("info", `${files.length} log file(s) staged for Tool 1 ingestion`);
+    }
+  }, [addTerminalLine]);
+
+  // Handle clear uploaded files
+  const handleClearFiles = useCallback(() => {
+    setUploadedFiles([]);
+    addTerminalLine("info", "Uploaded files cleared");
+  }, [addTerminalLine]);
+
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden">
       {/* Cyber grid background */}
@@ -169,12 +197,19 @@ const Index = () => {
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="w-80 border-r border-border bg-card/30 backdrop-blur-sm flex flex-col"
+          className="w-80 border-r border-border bg-card/30 backdrop-blur-sm flex flex-col overflow-hidden"
         >
-          <PipelineControl
-            onExecute={handleExecuteTool}
-            toolStatuses={toolStatuses}
+          <FileUploadPanel
+            onFilesReady={handleFilesReady}
+            onClear={handleClearFiles}
           />
+          <div className="flex-1 overflow-y-auto">
+            <PipelineControl
+              onExecute={handleExecuteTool}
+              toolStatuses={toolStatuses}
+              uploadedFiles={uploadedFiles}
+            />
+          </div>
         </motion.div>
 
         {/* CENTER PANEL - Terminal */}

@@ -39,6 +39,13 @@ interface ToolConfig {
   requiresApproval?: boolean;
 }
 
+interface UploadedFile {
+  id: string;
+  name: string;
+  size: number;
+  status: "pending" | "ready" | "error";
+}
+
 const tools: ToolConfig[] = [
   {
     id: 1,
@@ -46,7 +53,7 @@ const tools: ToolConfig[] = [
     description: "Unified Event Intelligence Engine",
     icon: Database,
     command: ".\\Tool1\\.venv\\Scripts\\python.exe -m src.main",
-    inputPath: "[raw_logs_path]",
+    inputPath: "[uploaded_log_files]",
     outputPath: "Tool1/output/",
     isAuto: false,
   },
@@ -108,9 +115,10 @@ type ToolStatus = "idle" | "running" | "complete" | "error";
 interface PipelineControlProps {
   onExecute: (tool: ToolConfig) => void;
   toolStatuses: Record<number, ToolStatus>;
+  uploadedFiles?: UploadedFile[];
 }
 
-export const PipelineControl = ({ onExecute, toolStatuses }: PipelineControlProps) => {
+export const PipelineControl = ({ onExecute, toolStatuses, uploadedFiles = [] }: PipelineControlProps) => {
   const [confirmTool, setConfirmTool] = useState<ToolConfig | null>(null);
 
   const getStatusIcon = (status: ToolStatus) => {
@@ -167,7 +175,8 @@ export const PipelineControl = ({ onExecute, toolStatuses }: PipelineControlProp
         {tools.map((tool, index) => {
           const status = toolStatuses[tool.id] || "idle";
           const Icon = tool.icon;
-          const isDisabled = status === "running";
+          const isDisabled = status === "running" || (tool.id === 1 && uploadedFiles.length === 0);
+          const needsFiles = tool.id === 1 && uploadedFiles.length === 0;
 
           return (
             <motion.div
@@ -223,8 +232,14 @@ export const PipelineControl = ({ onExecute, toolStatuses }: PipelineControlProp
                       {tool.description}
                     </p>
                     <code className="mt-1.5 block text-[10px] font-mono text-muted-foreground/70 truncate">
-                      {tool.command} "{tool.inputPath}"
+                      {tool.id === 1 && uploadedFiles.length > 0
+                        ? `${tool.command} "${uploadedFiles.map(f => f.name).join(", ")}"`
+                        : `${tool.command} "${tool.inputPath}"`
+                      }
                     </code>
+                    {needsFiles && (
+                      <p className="text-[10px] text-warning mt-1">↑ Upload log files above to enable</p>
+                    )}
                   </div>
 
                   {/* Status & Action */}
