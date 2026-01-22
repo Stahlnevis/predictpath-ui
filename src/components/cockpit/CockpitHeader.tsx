@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { Shield, Activity, Clock, Settings, HelpCircle } from "lucide-react";
+import { Shield, Activity, Clock, Settings, HelpCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ResetControls, ResetLevel } from "./ResetControls";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface CockpitHeaderProps {
   onReset: (level: ResetLevel) => void;
@@ -10,6 +11,7 @@ interface CockpitHeaderProps {
 }
 
 export const CockpitHeader = ({ onReset, systemStatus }: CockpitHeaderProps) => {
+  const { user, signOut } = useAuth();
   const getStatusBadge = () => {
     switch (systemStatus) {
       case "running":
@@ -90,6 +92,23 @@ export const CockpitHeader = ({ onReset, systemStatus }: CockpitHeaderProps) => 
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <HelpCircle className="h-4 w-4" />
         </Button>
+
+        {user && (
+          <div className="flex items-center gap-2 ml-2 pl-2 border-l border-border">
+            <span className="text-xs text-muted-foreground hidden md:inline truncate max-w-32">
+              {user.email}
+            </span>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              onClick={signOut}
+              title="Sign Out"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
     </header>
   );
