@@ -95,26 +95,25 @@ const Dashboard = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* View Mode Toggle */}
-              <div className="flex items-center gap-1 p-1 bg-muted/50 rounded-lg border border-border">
+              {/* Navigation */}
+              <nav className="hidden sm:flex items-center gap-1 p-1 bg-muted/50 rounded-lg border border-border">
                 <Button
-                  variant={viewMode === "non-technical" ? "default" : "ghost"}
+                  variant="default"
                   size="sm"
-                  onClick={() => setViewMode("non-technical")}
                   className="text-xs"
                 >
-                  Non-Technical
+                  Dashboard
                 </Button>
                 <Button
-                  variant={viewMode === "technical" ? "default" : "ghost"}
+                  variant="ghost"
                   size="sm"
                   onClick={handleTechnicalClick}
                   className="text-xs"
                 >
-                  Technical
+                  Technical Tools
                   <ChevronRight className="h-3 w-3 ml-1" />
                 </Button>
-              </div>
+              </nav>
 
               {/* User info */}
               <div className="flex items-center gap-3">
@@ -186,8 +185,8 @@ const Dashboard = () => {
           </Card>
         </motion.div>
 
-        {/* Security Categories Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Security Categories Column */}
+        <div className="flex flex-col gap-6 max-w-4xl mx-auto">
           {securityCategories.map((category, index) => (
             <motion.div
               key={category.id}
@@ -195,7 +194,7 @@ const Dashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
             >
-              <Card className={`h-full bg-card/50 backdrop-blur-sm border ${category.borderColor} hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5`}>
+              <Card className={`bg-card/50 backdrop-blur-sm border ${category.borderColor} hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5`}>
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
                     <div className={`p-3 rounded-lg ${category.bgColor}`}>

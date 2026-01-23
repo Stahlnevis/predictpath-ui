@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Shield, Activity, Clock, Settings, HelpCircle, LogOut } from "lucide-react";
+import { Shield, Activity, Clock, Settings, HelpCircle, LogOut, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ResetControls, ResetLevel } from "./ResetControls";
@@ -12,6 +13,8 @@ interface CockpitHeaderProps {
 
 export const CockpitHeader = ({ onReset, systemStatus }: CockpitHeaderProps) => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
   const getStatusBadge = () => {
     switch (systemStatus) {
       case "running":
@@ -42,6 +45,16 @@ export const CockpitHeader = ({ onReset, systemStatus }: CockpitHeaderProps) => 
     <header className="h-14 border-b border-border bg-card/80 backdrop-blur-sm px-4 flex items-center justify-between">
       {/* Left - Branding */}
       <div className="flex items-center gap-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => navigate("/")}
+          title="Back to Dashboard"
+        >
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+
         <motion.div
           className="flex items-center gap-2"
           initial={{ opacity: 0, x: -20 }}
